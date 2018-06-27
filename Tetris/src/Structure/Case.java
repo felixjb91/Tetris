@@ -1,45 +1,33 @@
 package Structure;
 
-public class Case {
-	private Position p;
-	private char valeur = ' ';
+import Formes.Forme;
+
+public class Case{
+	private int x,y;
+	private Forme parent;
 	
-	public Case(Position p){
-		this.p = p;
-	}
-
-	public char getValeur() {
-		return valeur;
-	}
-
-	public void setValeur(char valeur) {
-		this.valeur = valeur;
+	public Case(Forme f, int x, int y){
+		parent = f;
+		this.x = x;
+		this.y = y;	
 	}
 
 	public int getX() {
-		return p.getX();
+		return x;
 	}
 
 	public int getY() {
-		return p.getY();
+		return y;
 	}
 
-	@Override
-	public String toString() {
-		return "Case [p=" + p + ", valeur=" + valeur + "]";
-	}
-	
-	public String affiche(){
-		return valeur+"";
+	public Forme getParent() {
+		return parent;
 	}
 
-	public void liberer(){
-		this.valeur = ' ';
+	public void move(int a, int b) {
+		x+=a;
+		y+=b;
+		
 	}
-
-	public Position getP() {
-		return p;
-	}
-	
 	
 }

@@ -1,3 +1,4 @@
+
 package Structure;
 public class Grille {
 	private int nbLigne, nbColonne;

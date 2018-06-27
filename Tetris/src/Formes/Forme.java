@@ -1,117 +1,98 @@
 package Formes;
-import Exceptions.BloqueException;
-import Formes.States.*;
-import Structure.Case;
-import Structure.Grille;
-import Structure.Position;
+import java.util.List;
+import java.util.Random;
 
-public abstract class Forme implements Runnable {
+import Formes.States.*;
+import MainTest.EditorMain;
+import Structure.Case;
+
+import static MainTest.EditorMain.NB_COL;
+import static MainTest.EditorMain.TAILLE_TILE;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
+public abstract class Forme{
 	protected int id;
 	private static int cpt = 0;
-	protected Case c1, c2, c3, c4;
-	protected Grille g;
-	protected Position posDepart;
-	protected boolean stop = false;
+	private Color couleur;
+	protected List<Case> cases;
+	protected int x = (NB_COL/2), y = 0;
 	protected ISens sens = new Sens1();
 
-	public Forme(Grille g){
-		this.g = g;
+	public Forme(){
 		id = cpt++;	
-		posDepart = new Position(0,g.getNbColonne()/2);
+		Random rand = new Random();
+		int r = rand.nextInt(255);
+		int g = rand.nextInt(255);
+		int b = rand.nextInt(255);
+		couleur = Color.rgb(r, g, b);
 	}
 	
-	@Override
-	public String toString() {
-		return "Forme [id=" + id + ", c1=" + c1 + ", c2=" + c2 + ", c3=" + c3 + ", c4=" + c4 + ", g=" + g
-				+ ", posDepart=" + posDepart + "]";
+    public void draw(GraphicsContext g) {
+        g.setFill(couleur);
+        cases.forEach(c -> {
+        	g.fillRect(c.getX() * TAILLE_TILE, c.getY() * TAILLE_TILE, TAILLE_TILE, TAILLE_TILE);
+        });
+    }
+	public List<Case> getCases() {
+		return cases;
 	}
-	public Case getC1() {
-		return c1;
+	
+	public void gauche() {
+		if(preGauche()) {
+			EditorMain.removeFtoGrille(this);
+			cases.forEach(c -> c.move(-1, 0));
+			EditorMain.addFtoGrille(this);
+		}		
 	}
-	public Case getC2() {
-		return c2;
+	public boolean preGauche() {
+		for(Case c: cases) 
+			if(!EditorMain.peutAller(c, -1, 0)) 
+				return false;
+		return true;
 	}
-	public Case getC3() {
-		return c3;
+	
+	public void droite() {
+		if(preDroite()) {
+			EditorMain.removeFtoGrille(this);
+			cases.forEach(c -> c.move(1, 0));
+			EditorMain.addFtoGrille(this);
+		}		
 	}
-	public Case getC4() {
-		return c4;
+	public boolean preDroite() {
+		for(Case c: cases) 
+			if(!EditorMain.peutAller(c, 1, 0)) 
+				return false;
+		return true;
 	}
-	public Grille getG() {
-		return g;
-	}
-	public void setC1(Case c1) {
-		this.c1 = c1;
-	}
-	public void setC2(Case c2) {
-		this.c2 = c2;
-	}
-	public void setC3(Case c3) {
-		this.c3 = c3;
-	}
-	public void setC4(Case c4) {
-		this.c4 = c4;
-	}
-	private boolean bloque() {
-		return stop;
-	}
-	public void setValue(){
-		c1.setValeur((char)(id+'0'));
-		c2.setValeur((char)(id+'0'));
-		c3.setValeur((char)(id+'0'));
-		c4.setValeur((char)(id+'0'));	
-	}
-	private synchronized void chute() throws BloqueException{
-		if(g.peutDescendre(c1) && g.peutDescendre(c2) && g.peutDescendre(c3) && g.peutDescendre(c4)){		
-			Case ca1,ca2,ca3,ca4;
-			ca1 = c1;
-			ca2 = c2;
-			ca3 = c3;
-			ca4 = c4;
-			c1 = g.getCase(new Position(ca1.getX()+1,ca1.getY()));
-			c2 = g.getCase(new Position(ca2.getX()+1,ca2.getY()));
-			c3 = g.getCase(new Position(ca3.getX()+1,ca3.getY()));
-			c4 = g.getCase(new Position(ca4.getX()+1,ca4.getY()));
-			ca1.liberer();
-			ca2.liberer();
-			ca3.liberer();
-			ca4.liberer();
-			setValue();
+
+	public void chute(){
+		if(preChute()) {
+			EditorMain.removeFtoGrille(this);
+			cases.forEach(c -> c.move(0, 1));
+			EditorMain.addFtoGrille(this);
 		}
-		else{
-			throw new BloqueException("ne peut plus tomber");
+	}
+	
+	public boolean preChute() {
+		for(Case c: cases) {
+			if(!EditorMain.peuDescendre(c)) {
+				//System.out.println(c.getY() + " ne peut pas décendre");
+				return false;
+			}
 		}
-		
+		return true;
 	}
 	
 	public void rotate(){
 		sens.rotation(this);
 	}
-	
-	@Override
-	public void run(){
-		int i=0;
-		while(!bloque()){
-			try {
-				Thread.sleep(300);
-				if(i%2 == 0 && i>2) rotate();
-				chute();
-				g.affiche();
-				i++;
-			} catch (InterruptedException e){
-				e.printStackTrace();
-			}catch(BloqueException e){
-				e.getMessage();
-				stop=true;
-			}
-		}
-	}
 
 	public void nextSens(ISens s) {
 		this.sens = s;
 	}
-
-
-
-
+	
+	public int getId() {
+		return id;
+	}
 }
