@@ -2,8 +2,6 @@ package Formes;
 
 import java.util.ArrayList;
 
-import Structure.Case;
-
 public class FL extends Forme {
 
 	public FL() {

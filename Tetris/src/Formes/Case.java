@@ -1,6 +1,4 @@
-package Structure;
-
-import Formes.Forme;
+package Formes;
 
 public class Case{
 	private int x,y;

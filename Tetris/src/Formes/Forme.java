@@ -4,7 +4,6 @@ import java.util.Random;
 
 import Formes.States.*;
 import MainTest.EditorMain;
-import Structure.Case;
 
 import static MainTest.EditorMain.NB_COL;
 import static MainTest.EditorMain.TAILLE_TILE;

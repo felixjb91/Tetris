@@ -1,8 +1,6 @@
 package Formes;
 import java.util.Random;
 
-import Structure.Grille;
-
 public class FormeFactory {
 	private static Random rand = new Random();
 	public static Forme creatRandomForme(){

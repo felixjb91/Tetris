@@ -2,8 +2,6 @@ package Formes;
 
 import java.util.ArrayList;
 
-import Structure.Case;
-
 public class FCarre extends Forme  {
 	public FCarre() {
 		cases = new ArrayList<Case>();

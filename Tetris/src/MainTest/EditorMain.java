@@ -3,9 +3,9 @@ package MainTest;
 import java.util.ArrayList;
 import java.util.List;
 
+import Formes.Case;
 import Formes.Forme;
 import Formes.FormeFactory;
-import Structure.Case;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Parent;

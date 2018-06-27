@@ -2,8 +2,6 @@ package Formes;
 
 import java.util.ArrayList;
 
-import Structure.Case;
-
 public class FTrio extends Forme{
 	public FTrio() {
 		cases = new ArrayList<Case>();
