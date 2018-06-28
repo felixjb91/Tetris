@@ -1,7 +1,5 @@
 package Formes;
 import java.util.List;
-import java.util.Random;
-
 import Formes.States.*;
 import MainTest.EditorMain;
 
@@ -13,18 +11,13 @@ import javafx.scene.paint.Color;
 public abstract class Forme{
 	protected int id;
 	private static int cpt = 0;
-	private Color couleur;
+	protected Color couleur;
 	protected List<Case> cases;
 	protected int x = (NB_COL/2), y = 0;
 	protected ISens sens = new Sens1();
 
 	public Forme(){
 		id = cpt++;	
-		Random rand = new Random();
-		int r = rand.nextInt(255);
-		int g = rand.nextInt(255);
-		int b = rand.nextInt(255);
-		couleur = Color.rgb(r, g, b);
 	}
 	
     public void draw(GraphicsContext g) {

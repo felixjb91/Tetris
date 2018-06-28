@@ -1,6 +1,7 @@
 package Formes.States;
 
 import Formes.FL;
+import Formes.FL2;
 import Formes.FTrio;
 import Formes.Forme;
 import MainTest.EditorMain;
@@ -27,6 +28,17 @@ public class Sens4 implements ISens {
 				f.getCases().get(0).move(-1, -1);
 				f.getCases().get(2).move(1, 1);
 				f.getCases().get(3).move(0, 2);
+				EditorMain.addFtoGrille(f);;
+				f.nextSens(new Sens1());
+			}
+		}
+		else if(f instanceof FL2){
+			if(EditorMain.peutAller(f.getCases().get(0),1, -1) && EditorMain.peutAller(f.getCases().get(2),-1, 1) && EditorMain.peutAller(f.getCases().get(3),-2, 0))
+			{
+				EditorMain.removeFtoGrille(f);
+				f.getCases().get(0).move(1, -1);
+				f.getCases().get(2).move(-1, 1);
+				f.getCases().get(3).move(-2, 0);
 				EditorMain.addFtoGrille(f);;
 				f.nextSens(new Sens1());
 			}

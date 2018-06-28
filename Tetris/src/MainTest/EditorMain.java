@@ -14,25 +14,28 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 public class EditorMain extends Application{
 	
 	public static final int TAILLE_TILE = 35;
-    public static final int NB_COL = 15;
+    public static final int NB_COL = 13;
     public static final int NB_LIG = 20;
+    private final int SEUIL = 2;
     private double time = 0.0;
     GraphicsContext g; 
     Forme current;
     private List<Forme> lesFormes = new ArrayList<>();
     private static Case[][] grille = new Case[NB_COL][NB_LIG];
     private boolean stop = false;
-
+    private Line lineSeuil = new Line(5,SEUIL*TAILLE_TILE,(NB_COL*TAILLE_TILE)-5,SEUIL*TAILLE_TILE);
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		Scene scene = new Scene(creatContent());
 		stage.setScene(scene);
+		
 		
 		scene.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.UP)
@@ -58,6 +61,7 @@ public class EditorMain extends Application{
 		Canvas canvas = new Canvas(NB_COL*TAILLE_TILE,NB_LIG*TAILLE_TILE);
 	    root.getChildren().add(canvas);
 	    g = canvas.getGraphicsContext2D();
+	    root.getChildren().add(lineSeuil);
 	    
 	    spawn();
 	    draw();
@@ -141,7 +145,7 @@ public class EditorMain extends Application{
 	
 	public boolean finDuGame() {
 		for(int i=0; i<NB_COL; i++)
-			if( grille[i][2] != null) {
+			if( grille[i][SEUIL] != null) {
 				stop = true;
 				return true;
 			}
@@ -155,6 +159,7 @@ public class EditorMain extends Application{
 				return;
 			}
 			spawn();
+			draw();
 		}
 	}
 
