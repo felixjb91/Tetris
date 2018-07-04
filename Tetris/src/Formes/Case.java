@@ -25,7 +25,10 @@ public class Case{
 	public void move(int a, int b) {
 		x+=a;
 		y+=b;
-		
+	}
+	@Override
+	public String toString() {
+		return parent.getId()+"";
 	}
 	
 }

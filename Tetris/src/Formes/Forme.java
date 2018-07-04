@@ -37,6 +37,10 @@ public abstract class Forme{
 			EditorMain.addFtoGrille(this);
 		}		
 	}
+	public Color getColor() {
+		return couleur;
+	}
+
 	public boolean preGauche() {
 		for(Case c: cases) 
 			if(!EditorMain.peutAller(c, -1, 0)) 

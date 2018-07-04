@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 public class EditorMain extends Application{
 	
 	public static final int TAILLE_TILE = 35;
-    public static final int NB_COL = 13;
+    public static final int NB_COL = 5;
     public static final int NB_LIG = 20;
     private final int SEUIL = 2;
     private double time = 0.0;
@@ -75,6 +75,8 @@ public class EditorMain extends Application{
                 	//printGrille();
                 	chute();
                 	draw();
+        
+                	//printGrille();
                 	next();       	
                     time = 0;
                 }
@@ -107,6 +109,14 @@ public class EditorMain extends Application{
 
 	public void chute() {
 		lesFormes.forEach(f -> f.chute());
+	}
+	
+	public void chutePostSuppr(int i) {
+		for(int j=i-1; j>0; j--) 
+			for(int k=0; k<NB_COL; k++) {
+				grille[k][j+1] = grille[k][j];
+				grille[k][j] = null;
+			}
 	}
 
 	public static boolean peuDescendre(Case c) {
@@ -145,7 +155,7 @@ public class EditorMain extends Application{
 	
 	public boolean finDuGame() {
 		for(int i=0; i<NB_COL; i++)
-			if( grille[i][SEUIL] != null) {
+			if( grille[i][SEUIL-1] != null) {
 				stop = true;
 				return true;
 			}
@@ -154,12 +164,52 @@ public class EditorMain extends Application{
 	
 	public void next() {
 		if(canNext()) {
+			boolean bool = true;
+			do {
+				bool = supprLines();
+				System.out.println(bool);
+			}while(!bool);
+			//printGrille();
+			System.out.println();
 			if(finDuGame()) {
-				System.out.println("Ton score est de "+ lesFormes.size());
+				System.out.println("Ton score est de "+ (lesFormes.size()-1));
 				return;
 			}
 			spawn();
 			draw();
+		}
+	}
+
+	private boolean supprLines() {
+		boolean res = true;
+		int cpt = 0;
+		for(int i=NB_LIG-1; i>0; i--) {
+			for(int j=0; j<NB_COL; j++) {
+				if(getCase(j,i) != null) { cpt++; System.out.println(j+","+i);}
+				else cpt=0;
+			}
+			if(cpt==NB_COL) {
+				supprimer(i);
+				chutePostSuppr(i);			
+				System.out.println("Apres");
+				System.out.println(lesFormes.get(lesFormes.size()-1).getColor().toString());
+				printGrille();
+				res = false;
+			}
+			System.out.println(i);
+			cpt=0;
+		}
+		System.out.println(res);
+		return res;
+	}
+
+	private void supprimer(int i) {
+		for(int j=0; j<NB_COL; j++) {
+			Forme parent = grille[j][i].getParent();
+			Case cuurentC =  grille[j][i];
+			removeFtoGrille(parent);
+			parent.getCases().remove(cuurentC);
+			addFtoGrille(parent);	
 		}
 	}
 
