@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 public class EditorMain extends Application{
 	
 	public static final int TAILLE_TILE = 35;
-    public static final int NB_COL = 13;
+    public static final int NB_COL = 5;
     public static final int NB_LIG = 20;
     private final int SEUIL = 2;
     private double time = 0.0;
