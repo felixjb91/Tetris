@@ -36,6 +36,10 @@ public abstract class Forme{
         	g.fillRect(((c.getX()+x) * TAILLE_TILE)+2, ((c.getY()+y) * TAILLE_TILE)+2, TAILLE_TILE-2, TAILLE_TILE-1.5);
         });
     }
+	public Color getCouleur() {
+		return couleur;
+	}
+
 	public List<Case> getCases() {
 		return cases;
 	}
