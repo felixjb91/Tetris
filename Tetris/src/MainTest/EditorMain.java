@@ -14,23 +14,29 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 public class EditorMain extends Application{
 	
-	public static final int TAILLE_TILE = 35;
-    public static final int NB_COL = 5;
+	
+	public static final int TAILLE_TILE = 25;
+    public static final int NB_COL = 10;
     public static final int NB_LIG = 20;
+    private final int LARG_JEU = NB_COL * TAILLE_TILE;
+    private final int LARG_Fenetre = NB_COL+7;
     private final int SEUIL = 2;
     private double time = 0.0;
-    GraphicsContext g; 
-    Forme current;
+    private final double SPEED = 0.015;
+    GraphicsContext g,g2; 
+    Forme current,nextCurrent=FormeFactory.creatRandomForme();
+    boolean flag=true;
     private List<Forme> lesFormes = new ArrayList<>();
     private static Case[][] grille = new Case[NB_COL][NB_LIG];
     private boolean stop = false;
     private Line lineSeuil = new Line(5,SEUIL*TAILLE_TILE,(NB_COL*TAILLE_TILE)-5,SEUIL*TAILLE_TILE);
-
+    private Line separator = new Line(NB_COL*TAILLE_TILE, 5,NB_COL*TAILLE_TILE,NB_LIG*TAILLE_TILE);
 	@Override
 	public void start(Stage stage) throws Exception {
 		Scene scene = new Scene(creatContent());
@@ -46,6 +52,8 @@ public class EditorMain extends Application{
 				current.droite();
 			if(e.getCode() == KeyCode.DOWN)
 				current.chute();
+			draw();
+        	next();
         	draw();
 		});
 		stage.show();
@@ -57,11 +65,20 @@ public class EditorMain extends Application{
 	
 	private Parent creatContent(){
 		Pane root = new Pane();
-		root.setPrefSize(NB_COL*TAILLE_TILE,NB_LIG*TAILLE_TILE);
+		root.setPrefSize((LARG_Fenetre)*TAILLE_TILE,NB_LIG*TAILLE_TILE);
+		
 		Canvas canvas = new Canvas(NB_COL*TAILLE_TILE,NB_LIG*TAILLE_TILE);
+		Canvas canvasMENU = new Canvas((LARG_Fenetre)*TAILLE_TILE,NB_LIG*TAILLE_TILE);
+		
 	    root.getChildren().add(canvas);
+	    root.getChildren().add(canvasMENU);
+	    
 	    g = canvas.getGraphicsContext2D();
+	    g2 = canvasMENU.getGraphicsContext2D();
+	    
 	    root.getChildren().add(lineSeuil);
+	    root.getChildren().add(separator);
+	   
 	    
 	    spawn();
 	    draw();
@@ -69,7 +86,7 @@ public class EditorMain extends Application{
 	    AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                time += 0.017;
+                time += SPEED;
                 
                 if (time >= 0.5) {
                 	//printGrille();
@@ -93,7 +110,12 @@ public class EditorMain extends Application{
 	}
 	
 	public void spawn() {
-	    current = FormeFactory.creatRandomForme();
+		current = nextCurrent;
+	    nextCurrent = FormeFactory.creatRandomForme();
+	    
+	    g2.clearRect(0, 0, LARG_Fenetre*TAILLE_TILE, NB_LIG*TAILLE_TILE);
+	    nextCurrent.draw(g2, NB_COL/2+3, 2);    
+	    
 	    lesFormes.add(current);
 	    addFtoGrille(current);
 	}
@@ -106,7 +128,8 @@ public class EditorMain extends Application{
 	}
 
 	public void chute() {
-		lesFormes.forEach(f -> f.chute());
+		//lesFormes.forEach(f -> f.chute());
+		if(flag) current.chute();
 	}
 
 	public static boolean peuDescendre(Case c) {
@@ -134,33 +157,95 @@ public class EditorMain extends Application{
 	}
 	
 	public boolean canNext() {
-		if(!stop) {
-			for(Forme f: lesFormes)
-				if(f.preChute())
-					return false;
-			return true;
-		}
+		if(!stop) return !current.preChute();
 		return false;
 	}
 	
 	public boolean finDuGame() {
 		for(int i=0; i<NB_COL; i++)
-			if( grille[i][SEUIL] != null) {
+			if(grille[i][SEUIL]!=null) {
 				stop = true;
 				return true;
 			}
 		return false;
 	}
 	
+	public void pause(long temps) {
+		try {
+			Thread.sleep(temps);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void next() {
 		if(canNext()) {
+			printGrille();
+			flag = false;
+			supprimer();
 			if(finDuGame()) {
 				System.out.println("Ton score est de "+ lesFormes.size());
 				return;
 			}
+			flag = true;
+			//draw();
 			spawn();
 			draw();
+			System.out.println("fin next");	
 		}
+		
+	}
+	
+	public void supprimer() {
+		int cpt;
+		for(int i=NB_LIG-1; i>=0; i--) {
+			cpt = 0;
+			for(int j=0; j<NB_COL; j++) {
+				if(grille[j][i]!=null) {
+					cpt++;
+				}
+			}
+			if(cpt==NB_COL) {
+				suppLine(i);
+				i=NB_LIG-1;
+			}
+		}
+		System.out.println("fin suppr");
+	}
+
+	private void suppLine(int i) {
+		Case c;
+		for(int j=0; j<NB_COL; j++) {
+			c = grille[j][i];
+			Forme parent = c.getParent();
+			removeFtoGrille(parent);
+			parent.getCases().remove(c);
+			addFtoGrille(parent);
+			System.out.println("tour");
+		}
+
+
+		descentePostSuppr(i);
+		System.out.println("fin suppline");
+	}
+
+	private void descentePostSuppr(int i) {
+		Case c;
+		for(int y=i-1; y>=0; y--) {
+			for(int x=0; x<NB_COL; x++) {
+				c = grille[x][y];
+				if(c != null) {
+					removeFtoGrille(c.getParent());
+					c.move(0, 1);
+					addFtoGrille(c.getParent());
+				}
+			}
+
+			System.out.println("ligne "+y+" descendu");
+		}
+		System.out.println("fin descentePostSuppr");
+		
 	}
 
 }

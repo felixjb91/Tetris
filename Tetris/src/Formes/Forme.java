@@ -21,9 +21,19 @@ public abstract class Forme{
 	}
 	
     public void draw(GraphicsContext g) {
-        g.setFill(couleur);
         cases.forEach(c -> {
+        	g.setFill(Color.BLACK);
         	g.fillRect(c.getX() * TAILLE_TILE, c.getY() * TAILLE_TILE, TAILLE_TILE, TAILLE_TILE);
+        	g.setFill(couleur);
+        	g.fillRect((c.getX() * TAILLE_TILE)+2, (c.getY() * TAILLE_TILE)+2, TAILLE_TILE-2, TAILLE_TILE-1.5);
+        });
+    }
+    public void draw(GraphicsContext g,int x, int y) {
+        cases.forEach(c -> {
+        	g.setFill(Color.BLACK);
+        	g.fillRect((c.getX()+x) * TAILLE_TILE, (c.getY()+y) * TAILLE_TILE, TAILLE_TILE, TAILLE_TILE);
+        	g.setFill(couleur);
+        	g.fillRect(((c.getX()+x) * TAILLE_TILE)+2, ((c.getY()+y) * TAILLE_TILE)+2, TAILLE_TILE-2, TAILLE_TILE-1.5);
         });
     }
 	public List<Case> getCases() {

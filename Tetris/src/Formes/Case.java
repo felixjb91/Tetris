@@ -27,5 +27,8 @@ public class Case{
 		y+=b;
 		
 	}
+	public String toString() {
+		return parent.getId()+"";
+	}
 	
 }
