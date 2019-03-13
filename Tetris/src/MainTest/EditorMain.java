@@ -1,7 +1,5 @@
 package MainTest;
 
-import static MainTest.EditorMain.TAILLE_TILE;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,6 @@ public class EditorMain extends Application {
     private final int TAILLE_SCORE = 8;
     private final int SEUIL = 2;
     private double time = 0.0;
-    private double time2 = 0.0;
     private double SPEED = 0.015;
     private int nblignesuppr = 0;
     private Scene scene ;
